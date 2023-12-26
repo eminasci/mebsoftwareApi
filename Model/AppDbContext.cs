@@ -13,6 +13,8 @@ namespace mebsoftwareApi.Model
         public DbSet<Okul> Okul { get; set; } = default!;
         public DbSet<User> User { get; set; } = default!;
         public DbSet<Role> Role { get; set; } = default!;
+      
+
         public static void SeedData(AppDbContext context)
         {
             if (!context.Role.Any())

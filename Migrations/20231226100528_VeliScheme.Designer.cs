@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using mebsoftwareApi.Model;
 
@@ -10,9 +11,11 @@ using mebsoftwareApi.Model;
 namespace mebsoftwareApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231226100528_VeliScheme")]
+    partial class VeliScheme
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -49,8 +52,7 @@ namespace mebsoftwareApi.Migrations
 
                     b.HasKey("OkulId");
 
-                    b.HasIndex("UserId")
-                        .IsUnique();
+                    b.HasIndex("UserId");
 
                     b.ToTable("Okul");
                 });
@@ -128,9 +130,6 @@ namespace mebsoftwareApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
 
-                    b.Property<int>("OkulId")
-                        .HasColumnType("int");
-
                     b.Property<int>("RoleId")
                         .HasColumnType("int");
 
@@ -159,8 +158,8 @@ namespace mebsoftwareApi.Migrations
             modelBuilder.Entity("mebsoftwareApi.Model.Okul", b =>
                 {
                     b.HasOne("mebsoftwareApi.Model.User", "User")
-                        .WithOne("Okul")
-                        .HasForeignKey("mebsoftwareApi.Model.Okul", "UserId")
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -187,12 +186,6 @@ namespace mebsoftwareApi.Migrations
                         .IsRequired();
 
                     b.Navigation("Role");
-                });
-
-            modelBuilder.Entity("mebsoftwareApi.Model.User", b =>
-                {
-                    b.Navigation("Okul")
-                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

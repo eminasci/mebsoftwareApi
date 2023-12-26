@@ -20,11 +20,16 @@ namespace mebsoftwareApi.Controllers
             _context = context;
         }
 
+
+
+
+      
         // GET: api/Students
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Student>>> GetStudent()
         {
-            return await _context.Student.ToListAsync();
+            var students = await _context.Student.Include(s => s.Okul).ToListAsync();
+            return students;
         }
 
         // GET: api/Students/5
@@ -33,6 +38,7 @@ namespace mebsoftwareApi.Controllers
         {
             var student = await _context.Student.FindAsync(id);
 
+
             if (student == null)
             {
                 return NotFound();
@@ -40,6 +46,26 @@ namespace mebsoftwareApi.Controllers
 
             return student;
         }
+       
+        [HttpGet("list-students/{okulId}")]
+        public ActionResult<List<Student>> ListStudentsByOkulId(int okulId)
+        {
+            var students = _context.Student
+                .Where(s => s.OkulId == okulId)
+                .ToList();
+
+            if (students == null || students.Count == 0)
+            {
+                return NotFound("Okula bağlı öğrenci bulunamadı");
+            }
+
+            return Ok(students);
+        }
+
+
+
+
+
 
         // PUT: api/Students/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -70,6 +96,8 @@ namespace mebsoftwareApi.Controllers
             existingStudent.OgrenciPhoneNumber = studentModel.OgrenciPhoneNumber;
             existingStudent.OgrenciDurum = studentModel.OgrenciDurum;
             existingStudent.OkulId = studentModel.OkulId;
+            existingStudent.VeliName = studentModel.VeliName;
+            existingStudent.VeliPhoneNumber = studentModel.VeliPhoneNumber;
 
             // Veritabanına kaydedin
             await _context.SaveChangesAsync();
@@ -92,10 +120,16 @@ namespace mebsoftwareApi.Controllers
             public string OgrenciDurum { get; set; }
 
             public string OgrenciPhoneNumber { get; set; }
+            
+            public string VeliName { get; set; }
+
+            public string VeliPhoneNumber { get; set; }
 
 
             public int OkulId { get; set; }
         }
+
+
 
         // POST: api/Students
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -120,7 +154,9 @@ namespace mebsoftwareApi.Controllers
                 OgrenciSinif = studentModel.OgrenciSinif,
                 OgrenciPhoneNumber = studentModel.OgrenciPhoneNumber,
                 OgrenciDurum = studentModel.OgrenciDurum,
-                OkulId = studentModel.OkulId
+                OkulId = studentModel.OkulId,
+                VeliName = studentModel.VeliName,
+                VeliPhoneNumber = studentModel.VeliPhoneNumber,
             };
 
             // Veritabanına kaydedin
@@ -147,11 +183,17 @@ namespace mebsoftwareApi.Controllers
 
             public string OgrenciPhoneNumber { get; set; }
 
+            public string VeliName { get; set; }
+            
+            public  string VeliPhoneNumber { get; set; }
+
 
             public int OkulId { get; set; }
         }
 
 
+
+       
         // DELETE: api/Students/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteStudent(int id)

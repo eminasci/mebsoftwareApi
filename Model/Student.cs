@@ -21,6 +21,14 @@ namespace mebsoftwareApi.Model
         
         public string ?OgrenciDurum {  get; set; }
         public string OgrenciPhoneNumber { get; set; }
+
+        
+
+        public string VeliName {  get; set; }
+        public string VeliPhoneNumber { get; set; }
+
+
+
         [Required]
         public int OkulId { get; set; }
 

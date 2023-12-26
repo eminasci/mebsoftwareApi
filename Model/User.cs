@@ -19,9 +19,10 @@ namespace mebsoftwareApi.Model
 
 
         public int RoleId { get; set; }
-
-        // Okul ilişkisi
         
+       
+        
+
 
         // Kullanıcıya ait rol
         [ForeignKey(nameof(RoleId))]

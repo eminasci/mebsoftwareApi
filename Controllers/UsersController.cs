@@ -144,6 +144,18 @@ public class UserController : ControllerBase
         public string UserPhoneNumber { get; set; }
     }
 
+    [HttpGet("get-school/{userId}")]
+    public ActionResult<Okul> GetSchoolByUserId(int userId)
+    {
+        var okul = _context.Okul.FirstOrDefault(o => o.UserId == userId);
+
+        if (okul == null)
+        {
+            return NotFound("Kullanıcının bağlı olduğu okul bulunamadı");
+        }
+
+        return Ok(okul);
+    }
 
     // Belirli bir kullanıcıyı sil
     [HttpDelete("{id}")]
