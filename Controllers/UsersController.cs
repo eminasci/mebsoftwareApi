@@ -17,6 +17,7 @@ public class UserController : ControllerBase
         _context = context;
     }
 
+
     // Tüm kullanıcıları getir
     [HttpGet]
     public async Task<ActionResult<IEnumerable<User>>> GetUsers()
@@ -145,7 +146,7 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("get-school/{userId}")]
-    public ActionResult<Okul> GetSchoolByUserId(int userId)
+    public ActionResult<IEnumerable<Student>> GetStudentsByUserId(int userId)
     {
         var okul = _context.Okul.FirstOrDefault(o => o.UserId == userId);
 
@@ -154,7 +155,14 @@ public class UserController : ControllerBase
             return NotFound("Kullanıcının bağlı olduğu okul bulunamadı");
         }
 
-        return Ok(okul);
+        var students = _context.Student.Where(s => s.OkulId == okul.OkulId).ToList();
+
+        if (students.Count == 0)
+        {
+            return NotFound("Okula bağlı öğrenci bulunamadı");
+        }
+
+        return Ok(students);
     }
 
     // Belirli bir kullanıcıyı sil

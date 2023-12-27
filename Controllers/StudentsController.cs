@@ -128,6 +128,58 @@ namespace mebsoftwareApi.Controllers
 
             public int OkulId { get; set; }
         }
+        [HttpPost("add-student-admin")]
+        public async Task<ActionResult<Student>> AddStudent([FromBody] AdminStudentCreateModel studentModel)
+        {
+            try
+            {
+                // Kullanıcının bağlı olduğu okulu bul
+                var okul = _context.Okul.FirstOrDefault(o => o.UserId == studentModel.UserId);
+
+                // Eğer okul bulunamazsa
+                if (okul == null)
+                {
+                    return BadRequest("Kullanıcının bağlı olduğu okul bulunamadı");
+                }
+
+                // Öğrenci bilgilerini ekleyin
+                var newStudent = new Student
+                {
+                    OgrenciName = studentModel.OgrenciName,
+                    OgrenciTc = studentModel.OgrenciTc,
+                    OgrenciDevamsizlik = studentModel.OgrenciDevamsizlik,
+                    OgrenciSinif = studentModel.OgrenciSinif,
+                    OgrenciPhoneNumber = studentModel.OgrenciPhoneNumber,
+                    OgrenciDurum = studentModel.OgrenciDurum,
+                    OkulId = okul.OkulId,  // Kullanıcının bağlı olduğu okulun Id'sini kullan
+                    VeliName = studentModel.VeliName,
+                    VeliPhoneNumber = studentModel.VeliPhoneNumber,
+                };
+
+                // Veritabanına kaydedin
+                _context.Student.Add(newStudent);
+                await _context.SaveChangesAsync();
+
+                return CreatedAtAction(nameof(GetStudent), new { studentId = newStudent.OgrenciId }, newStudent);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Server Error: {ex.Message}");
+            }
+        }
+
+        public class AdminStudentCreateModel
+        {
+            public string OgrenciName { get; set; }
+            public string OgrenciTc { get; set; }
+            public int OgrenciDevamsizlik { get; set; }
+            public string OgrenciDurum { get; set; }
+            public string OgrenciSinif { get; set; }
+            public string OgrenciPhoneNumber { get; set; }
+            public string VeliName { get; set; }
+            public string VeliPhoneNumber { get; set; }
+            public int UserId { get; set; }  // Eklenen öğrencinin bağlı olduğu kullanıcının Id'si
+        }
 
 
 
@@ -190,6 +242,7 @@ namespace mebsoftwareApi.Controllers
 
             public int OkulId { get; set; }
         }
+
 
 
 
